@@ -16,9 +16,9 @@ function VerifyRegistryChange {
     $value = Get-ItemPropertyValue -Path $chromeRegPath -Name $chromeRegValue
 
     if ($value -eq 0) {
-        Write-Host "Registry change successful."
+        Write-Host "Registry change successful. Value: $value"
     } else {
-        Write-Host "Registry change failed."
+        Write-Host "Registry change failed. Value: $value"
     }
 }
 

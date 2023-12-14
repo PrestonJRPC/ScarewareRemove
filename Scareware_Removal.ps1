@@ -15,16 +15,18 @@ function Get-ChromeHistory {
             $title = $reader.GetValue(1)
             $lastVisitTime = [DateTime]::FromFileTimeUtc($reader.GetInt64(2))
 
-            Write-Output "URL: $url"
-            Write-Output "Title: $title"
-            Write-Output "Last Visit Time: $lastVisitTime"
-            Write-Output ""
+            Write-Host "URL: $url"
+            Write-Host "Title: $title"
+            Write-Host "Last Visit Time: $lastVisitTime"
+            Write-Host ""
         }
 
         $reader.Close()
         $connection.Close()
     }
     else {
-        Write-Output "Chrome history file not found."
+        Write-Host "Chrome history file not found."
     }
 }
+
+Get-ChromeHistory

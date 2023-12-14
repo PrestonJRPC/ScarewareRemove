@@ -1,18 +1,12 @@
-# Clear browsing history
-$shell = New-Object -ComObject Shell.Application
-$shell.NameSpace(34).Items() | foreach {
-    $shell.Namespace(34).InvokeVerb("Delete")
-}
-function Clear-ChromeBrowsingHistory {
-    $profilesPath = "$env:LOCALAPPDATA\Google\Chrome\User Data\"
-    $profiles = Get-ChildItem -Path $profilesPath -Directory -Filter "Profile *"
+function DisableChromeNotifications {
+    $chromeRegPath = "HKCU:\Software\Policies\Google\Chrome"
+    $chromeRegValue = "NotificationsAllowedForUrls"
 
-    foreach ($profile in $profiles) {
-        $historyPath = Join-Path -Path $profile.FullName -ChildPath "Default\History"
-        if (Test-Path -Path $historyPath) {
-            Remove-Item -Path $historyPath -Force
-        }
+    if (-not (Test-Path $chromeRegPath)) {
+        New-Item -Path $chromeRegPath -Force | Out-Null
     }
+
+    Set-ItemProperty -Path $chromeRegPath -Name $chromeRegValue -Value 0
 }
 
-Clear-ChromeBrowsingHistory
+DisableChromeNotifications

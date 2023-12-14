@@ -9,4 +9,18 @@ function DisableChromeNotifications {
     Set-ItemProperty -Path $chromeRegPath -Name $chromeRegValue -Value 0
 }
 
+function VerifyRegistryChange {
+    $chromeRegPath = "HKCU:\Software\Policies\Google\Chrome"
+    $chromeRegValue = "NotificationsAllowedForUrls"
+
+    $value = Get-ItemPropertyValue -Path $chromeRegPath -Name $chromeRegValue
+
+    if ($value -eq 0) {
+        Write-Host "Registry change successful."
+    } else {
+        Write-Host "Registry change failed."
+    }
+}
+
 DisableChromeNotifications
+VerifyRegistryChange

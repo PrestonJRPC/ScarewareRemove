@@ -1,24 +1,15 @@
-# Clear Chrome cache
-$chromeCachePath = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache"
-Remove-Item -Path $chromeCachePath -Recurse -Force
+$chromeProfilesPath = "$env:LOCALAPPDATA\Google\Chrome\User Data"
 
-# Clear Chrome browsing history
-$chromeHistoryPath = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\History"
-Remove-Item -Path $chromeHistoryPath -Force
+# Get all Chrome profile directories
+$profileDirectories = Get-ChildItem -Path $chromeProfilesPath -Directory -Filter "Profile*"
 
-# Turn off Chrome notifications
-$chromePreferencesPath = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Preferences"
-$chromePreferences = Get-Content -Path $chromePreferencesPath | ConvertFrom-Json
-$chromePreferences.profile.default_content_setting_values.notifications = 2
-$chromePreferences | ConvertTo-Json | Set-Content -Path $chromePreferencesPath
-
-# Turn off Chrome notifications in the registry
-$chromeRegistryPath = "HKCU:\Software\Policies\Google\Chrome"
-$chromeRegistryValueName = "DefaultNotificationsSetting"
-$chromeRegistryValueData = 2
-
-if (!(Test-Path $chromeRegistryPath)) {
-    New-Item -Path $chromeRegistryPath -Force | Out-Null
+foreach ($profileDirectory in $profileDirectories) {
+    $cachePath = Join-Path -Path $profileDirectory.FullName -ChildPath "Cache"
+    
+    if (Test-Path -Path $cachePath) {
+        $cacheSize = (Get-ChildItem -Path $cachePath -Recurse | Measure-Object -Property Length -Sum).Sum
+        $cacheSizeInMB = $cacheSize / 1MB
+        
+        Write-Host "Profile $($profileDirectory.Name) - Cache Size: $($cacheSizeInMB)MB"
+    }
 }
-
-Set-ItemProperty -Path $chromeRegistryPath -Name $chromeRegistryValueName -Value $chromeRegistryValueData
